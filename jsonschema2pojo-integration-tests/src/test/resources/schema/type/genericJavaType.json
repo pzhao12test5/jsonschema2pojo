@@ -15,12 +15,6 @@
         },
         "d" : {
             "javaType" : "java.util.Map<String,Double>"
-        },
-        "e" : {
-            "javaType" : "java.util.Map<String,?>"
-        },
-        "f" : {
-            "javaType" : "java.util.Map<String,? extends Number>"
         }
     }
 }

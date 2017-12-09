@@ -22,7 +22,6 @@ import java.util.Iterator;
 
 import org.jsonschema2pojo.exception.GenerationException;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -40,22 +39,14 @@ import com.fasterxml.jackson.databind.ser.std.NullSerializer;
 
 public class SchemaGenerator {
 
-    private final ObjectMapper objectMapper;
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper()
+            .enable(JsonParser.Feature.ALLOW_COMMENTS)
+            .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
 
-    public SchemaGenerator() {
-        this(null);
-    }
-    
-    public SchemaGenerator(JsonFactory jsonFactory) {
-        this.objectMapper = new ObjectMapper(jsonFactory)
-                .enable(JsonParser.Feature.ALLOW_COMMENTS)
-                .enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
-    }
-    
     public ObjectNode schemaFromExample(URL example) {
 
         try {
-            JsonNode content = this.objectMapper.readTree(example);
+            JsonNode content = OBJECT_MAPPER.readTree(example);
             return schemaFromExample(content);
         } catch (IOException e) {
             throw new GenerationException("Could not process JSON in source file", e);
@@ -77,10 +68,10 @@ public class SchemaGenerator {
 
     private ObjectNode objectSchema(JsonNode exampleObject) {
 
-        ObjectNode schema = this.objectMapper.createObjectNode();
+        ObjectNode schema = OBJECT_MAPPER.createObjectNode();
         schema.put("type", "object");
 
-        ObjectNode properties = this.objectMapper.createObjectNode();
+        ObjectNode properties = OBJECT_MAPPER.createObjectNode();
         for (Iterator<String> iter = exampleObject.fieldNames(); iter.hasNext();) {
             String property = iter.next();
             properties.set(property, schemaFromExample(exampleObject.get(property)));
@@ -91,7 +82,7 @@ public class SchemaGenerator {
     }
 
     private ObjectNode arraySchema(JsonNode exampleArray) {
-        ObjectNode schema = this.objectMapper.createObjectNode();
+        ObjectNode schema = OBJECT_MAPPER.createObjectNode();
 
         schema.put("type", "array");
 
@@ -107,7 +98,7 @@ public class SchemaGenerator {
 
     private JsonNode mergeArrayItems(JsonNode exampleArray) {
 
-        ObjectNode mergedItems = this.objectMapper.createObjectNode();
+        ObjectNode mergedItems = OBJECT_MAPPER.createObjectNode();
 
         for (JsonNode item : exampleArray) {
             if (item.isObject()) {
@@ -152,11 +143,11 @@ public class SchemaGenerator {
 
         try {
 
-            Object valueAsJavaType = this.objectMapper.treeToValue(exampleValue, Object.class);
+            Object valueAsJavaType = OBJECT_MAPPER.treeToValue(exampleValue, Object.class);
 
             SchemaAware valueSerializer = getValueSerializer(valueAsJavaType);
 
-            return (ObjectNode) valueSerializer.getSchema(this.objectMapper.getSerializerProvider(), null);
+            return (ObjectNode) valueSerializer.getSchema(OBJECT_MAPPER.getSerializerProvider(), null);
         } catch (JsonMappingException e) {
             throw new GenerationException("Unable to generate a schema for this json example: " + exampleValue, e);
         } catch (JsonProcessingException e) {
@@ -167,7 +158,7 @@ public class SchemaGenerator {
 
     private SchemaAware getValueSerializer(Object valueAsJavaType) throws JsonMappingException {
 
-        SerializerProvider serializerProvider = new DefaultSerializerProvider.Impl().createInstance(this.objectMapper.getSerializationConfig(), BeanSerializerFactory.instance);
+        SerializerProvider serializerProvider = new DefaultSerializerProvider.Impl().createInstance(OBJECT_MAPPER.getSerializationConfig(), BeanSerializerFactory.instance);
 
         if (valueAsJavaType == null) {
             return NullSerializer.instance;
