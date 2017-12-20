@@ -193,7 +193,7 @@ public class JsonTypesIT {
         assertEquals(Integer.class, genType.getMethod("getScalar").getReturnType());
 
         thrown.expect(InvalidFormatException.class);
-        thrown.expectMessage(startsWith("Cannot deserialize value of type `java.lang.Integer` from String \"what\": not a valid Integer value"));
+        thrown.expectMessage("Can not construct instance of java.lang.Integer from String value (\"what\")");
         OBJECT_MAPPER.readValue(this.getClass().getResourceAsStream("/json/simplePropertiesInArrayItem.json"), Array.newInstance(genType, 0).getClass());
     }
 
