@@ -28,7 +28,6 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.apache.commons.io.FilenameUtils;
 import org.apache.maven.artifact.DependencyResolutionRequiredException;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -218,7 +217,7 @@ public class Jsonschema2PojoMojo extends AbstractMojo implements GenerationConfi
      * @since 0.3.1
      */
     private boolean includeToString = true;
-
+    
     /**
      * The fields to be excluded from toString generation
      *
@@ -334,12 +333,9 @@ public class Jsonschema2PojoMojo extends AbstractMojo implements GenerationConfi
      * Supported values:
      * <ul>
      * <li><code>jsonschema</code> (schema documents, containing formal rules
-     * that describe the structure of JSON data)</li>
+     * that describe the structure of json data)</li>
      * <li><code>json</code> (documents that represent an example of the kind of
-     * JSON data that the generated Java types will be mapped to)</li>
-     * <li><code>yamlschema</code> (JSON schema documents, represented as YAML)</li>
-     * <li><code>yaml</code> (documents that represent an example of the kind of
-     * YAML (or JSON) data that the generated Java types will be mapped to)</li>
+     * json data that the generated Java types will be mapped to)</li>
      * </ul>
      *
      * @parameter expression="${jsonschema2pojo.sourceType}"
@@ -716,12 +712,12 @@ public class Jsonschema2PojoMojo extends AbstractMojo implements GenerationConfi
      * <li><code>java</code> (Generate .java source files)</li>
      * <li><code>scala</code> (Generate .scala source files, using scalagen)</li>
      * </ul>
-     *
+     * 
      * @parameter expression="${jsonschema2pojo.targetLanguage}" default-value="java"
      * @since 0.5.0
      */
     private String targetLanguage = "java";
-
+    
     /**
      * Executes the plugin, to read the given source and behavioural properties
      * and generate POJOs. The current implementation acts as a wrapper around
@@ -752,7 +748,6 @@ public class Jsonschema2PojoMojo extends AbstractMojo implements GenerationConfi
 
         // verify source directories
         if (sourceDirectory != null) {
-            sourceDirectory = FilenameUtils.normalize(sourceDirectory);
             // verify sourceDirectory
             try {
                 URLUtil.parseURL(sourceDirectory);
@@ -761,10 +756,9 @@ public class Jsonschema2PojoMojo extends AbstractMojo implements GenerationConfi
             }
         } else if (!isEmpty(sourcePaths)) {
             // verify individual source paths
-            for (int i = 0; i < sourcePaths.length; i++) {
-                sourcePaths[i] = FilenameUtils.normalize(sourcePaths[i]);
+            for (String source : sourcePaths) {
                 try {
-                    URLUtil.parseURL(sourcePaths[i]);
+                    URLUtil.parseURL(source);
                 } catch (IllegalArgumentException e) {
                     throw new MojoExecutionException(e.getMessage(), e);
                 }
@@ -868,7 +862,7 @@ public class Jsonschema2PojoMojo extends AbstractMojo implements GenerationConfi
     public boolean isIncludeToString() {
         return includeToString;
     }
-
+    
     @Override
     public String[] getToStringExcludes() {
         return toStringExcludes;
@@ -1120,7 +1114,7 @@ public class Jsonschema2PojoMojo extends AbstractMojo implements GenerationConfi
     public SourceSortOrder getSourceSortOrder() {
         return SourceSortOrder.valueOf(sourceSortOrder.toUpperCase());
     }
-
+    
     @Override
     public Language getTargetLanguage() {
         return Language.valueOf(targetLanguage.toUpperCase());

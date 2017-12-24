@@ -45,12 +45,6 @@ dependencies {
 
 // Each configuration is set to the default value
 jsonSchema2Pojo {
-
-  // Whether to allow 'additional' properties to be supported in classes by adding a map to
-  // hold these. This is true by default, meaning that the schema rule 'additionalProperties'
-  // controls whether the map is added. Set this to false to globabally disable additional properties.
-  includeAdditionalProperties = false
-
   // Whether to generate builder-style methods of the form withXxx(value) (that return this),
   // alongside the standard, void-return setters.
   generateBuilders = false
@@ -124,11 +118,8 @@ jsonSchema2Pojo {
   includeJsr303Annotations = false
 
   // The type of input documents that will be read. Supported values:
-  //  - jsonschema (schema documents, containing formal rules that describe the structure of JSON data)
-  //  - json (documents that represent an example of the kind of JSON data that the generated Java types
-  //          will be mapped to)
-  //  - yamlschema (JSON schema documents, represented as YAML)
-  //  - yaml (documents that represent an example of the kind of YAML (or JSON) data that the generated Java types
+  //  - jsonschema (schema documents, containing formal rules that describe the structure of json data)
+  //  - json (documents that represent an example of the kind of json data that the generated Java types
   //          will be mapped to)
   sourceType = 'jsonschema'
 

@@ -27,20 +27,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public class SchemaStore {
 
-    protected final Map<URI, Schema> schemas = new HashMap<URI, Schema>();
+    protected Map<URI, Schema> schemas = new HashMap<URI, Schema>();
 
-    protected final FragmentResolver fragmentResolver = new FragmentResolver();
-    protected final ContentResolver contentResolver;
+    protected FragmentResolver fragmentResolver = new FragmentResolver();
+    protected ContentResolver contentResolver = new ContentResolver();
 
-    public SchemaStore() {
-		this.contentResolver = new ContentResolver();
-	}
-
-    public SchemaStore(ContentResolver contentResolver) {
-		this.contentResolver = contentResolver;
-	}
-
-	/**
+    /**
      * Create or look up a new schema which has the given ID and read the
      * contents of the given ID as a URL. If a schema with the given ID is
      * already known, then a reference to the original schema will be returned.
